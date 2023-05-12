@@ -1,4 +1,5 @@
 import RegisterAndLoginForm from "./RegisterAndLoginForm";
+import Chat from "./Chat";
 import {useContext} from "react";
 import {UserContext} from "./UserContext.jsx"
 
@@ -7,7 +8,7 @@ export default function Route(){
 
 
     if(username){
-        return "logged in" +username;
+        return <Chat/>;
     }
 
 

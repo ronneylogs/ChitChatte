@@ -22,6 +22,9 @@ const bcrypt = require('bcryptjs');
 // For cookie-parser
 const cookieParser = require('cookie-parser');
 
+// For websocket
+const ws = require('ws');
+
 
 dotenv.config();
 mongoose.connect(process.env.MONGO_URL, (err) => {
@@ -128,6 +131,33 @@ app.post('/register', async (req,res) => {
 
 
 // For listening to port
-app.listen(4040);
+const server = app.listen(4040);
 
-//iyFBdes0F8jh5KHC
+
+
+// Create websocket server (wss)
+const wss = new ws.WebSocketServer({server});
+
+wss.on('connection', (connection,req) => {
+    const cookies = req.headers.cookie;
+    if(cookies){
+        const tokenCookieString = cookies.split(';').find(str =>str.startsWith('token='));
+        if(tokenCookieString){
+            const token = tokenCookieString.split('=')[1];
+            if(token){
+                jwt.verify(token,jwtSecret,{},(err,userData)=>{
+                    if(err) throw err;
+                    const {userId, username} = userData;
+                    connection.userId = userId;
+                    connection.username = username;
+                });
+            }
+        }
+    }
+
+
+    // After user information is collected.
+    console.log([...wss.clients]);
+
+
+});
