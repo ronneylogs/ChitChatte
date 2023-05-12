@@ -6,24 +6,34 @@ export default function Chat(){
     // Connect to wss here
     const [ws,setWs] = useState(null);
     const [onlinePeople,setOnlinePeople] = useState({});
+
+    // To stream new information coming from wss
     useEffect(()=>{
         const ws = new WebSocket('ws://localhost:4040');
         setWs(ws);
+
+        // listening to changes in handle message
         ws.addEventListener('message',handleMessage)
 
     },[]);
 
+
+    // Loops through the people array and displays each userId's username
     function showOnlinePeople(peopleArray){
         const people = {};
         peopleArray.forEach(({userId,username}) => {
             people[userId] = username;
         });
+
+        // Update the object for the new people
         setOnlinePeople(people);
 
     }
 
     function handleMessage(ev){
         const messageData = JSON.parse(ev.data);
+
+        // online is the name set in the server code for online users
         if('online' in messageData){
             showOnlinePeople(messageData.online);
 
@@ -40,6 +50,7 @@ export default function Chat(){
                         <path d="M15.75 7.5c-1.376 0-2.739.057-4.086.169C10.124 7.797 9 9.103 9 10.609v4.285c0 1.507 1.128 2.814 2.67 2.94 1.243.102 2.5.157 3.768.165l2.782 2.781a.75.75 0 001.28-.53v-2.39l.33-.026c1.542-.125 2.67-1.433 2.67-2.94v-4.286c0-1.505-1.125-2.811-2.664-2.94A49.392 49.392 0 0015.75 7.5z" />
                     </svg>
                     Chit Chat</div>
+                    {/* Goes over each online person and displays their username given userId */}
                 {Object.keys(onlinePeople).map(userId => (
                     <div className="border-b border-gray-100 py-2">
                         {onlinePeople[userId]}

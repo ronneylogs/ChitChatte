@@ -138,16 +138,26 @@ const server = app.listen(4040);
 // Create websocket server (wss)
 const wss = new ws.WebSocketServer({server});
 
+// Connection opened event
 wss.on('connection', (connection,req) => {
     const cookies = req.headers.cookie;
+    // If cookies exist
     if(cookies){
+        // Take the token by parsing the cookie string
         const tokenCookieString = cookies.split(';').find(str =>str.startsWith('token='));
+
+        // If token cookie string exists 
         if(tokenCookieString){
+            // Get the token from the string
             const token = tokenCookieString.split('=')[1];
             if(token){
+                // Json web token to verify user
                 jwt.verify(token,jwtSecret,{},(err,userData)=>{
                     if(err) throw err;
+                    // If no error then grab the the userdata
                     const {userId, username} = userData;
+
+                    // Add the userid and username to connection instance
                     connection.userId = userId;
                     connection.username = username;
                 });
@@ -158,8 +168,11 @@ wss.on('connection', (connection,req) => {
 
     // After user information is collected.
     [...wss.clients].forEach(client => {
+        // For each client send the client information
 
         client.send(JSON.stringify({
+            // online has a userid and username
+            // rhs of the line below turns wss.clients into a map with userId, and username
             online: [...wss.clients].map(c=>({userId:c.userId,username:c.username}))
             
 
