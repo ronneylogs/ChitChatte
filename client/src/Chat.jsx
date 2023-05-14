@@ -11,6 +11,8 @@ export default function Chat(){
     const [ws,setWs] = useState(null);
     const [onlinePeople,setOnlinePeople] = useState({});
     const {username,id} = useContext(UserContext);
+    const [newMessageText,setNewMessageText] = useState('');
+    const [messages,setMessages] = useState([]);
 
     // To stream new information coming from wss
     useEffect(()=>{
@@ -41,9 +43,22 @@ export default function Chat(){
         // online is the name set in the server code for online users
         if('online' in messageData){
             showOnlinePeople(messageData.online);
-
-
         }
+        else{
+            setMessages(prev=> ([...prev,{isOur:false,text:messageData.text}]));
+        }
+    }
+
+    function sendMessage(ev){
+        ev.preventDefault();
+
+        ws.send(JSON.stringify({
+            recipient: selectedUserId,
+            text: newMessageText,
+        }));
+        setNewMessageText('');
+        setMessages(prev =>([...prev,{text:newMessageText, isOur:true}]));
+
     }
 
     const onlinePeopleExclOurUser =  {...onlinePeople};
@@ -79,17 +94,35 @@ export default function Chat(){
                             <div className="text-gray-300">&larr; Select a person from the sidebar</div>
                         </div>
                     )}
+                    {!!selectedUserId && (
+                        <div>
+                            {messages.map(message => (
+                                <div>{message.text}</div>
+
+                            ))}
+
+                        </div>
+
+                    )}
                 </div>
-                <div className="flex gap-2">
-                    <input type="text" 
+
+                {!!selectedUserId && (
+                <form className="flex gap-2" onSubmit={sendMessage}>
+                    <input 
+                    type="text" 
+                    value = {newMessageText}
+                    onChange = {ev => setNewMessageText(ev.target.value)}
                     placeholder="Type your message here" 
                     className="bg-white flex-grow border rounded-sm p-2 " />
-                <button className="bg-blue-500 p-2 text-white rounded-sm">
+                <button type="submit" className="bg-blue-500 p-2 text-white rounded-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
                     </svg>
                 </button>
-                </div>
+                </form>
+
+                )}
+
             </div>
         </div>
     );

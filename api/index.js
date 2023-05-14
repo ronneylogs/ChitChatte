@@ -10,6 +10,9 @@ const dotenv = require('dotenv');
 // For user schema
 const User = require('./models/User');
 
+// For message schema
+const Message = require('./models/Message');
+
 // For jSON web token.
 const jwt = require('jsonwebtoken');
 
@@ -140,6 +143,9 @@ const wss = new ws.WebSocketServer({server});
 
 // Connection opened event
 wss.on('connection', (connection,req) => {
+
+
+    // Read username and id from the cookie for this connection
     const cookies = req.headers.cookie;
     // If cookies exist
     if(cookies){
@@ -165,7 +171,26 @@ wss.on('connection', (connection,req) => {
         }
     }
 
+    connection.on('message', async (message) => {
+        messageData = JSON.parse(message.toString());
+        const {recipient, text} = messageData;
 
+        if(recipient && text){
+
+            const messageDoc = await Message.create({
+                sender:connection.userId,
+                recipient,
+                text,
+            });
+            [...wss.clients]
+            .filter(c=>c.userId === recipient)
+            .forEach(c=>c.send(JSON.stringify({text,sender:connection.userId})));
+        }
+
+    });
+
+
+    // Notify everyone about online people (when someone connects)
     // After user information is collected.
     [...wss.clients].forEach(client => {
         // For each client send the client information
