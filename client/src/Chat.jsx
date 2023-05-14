@@ -2,6 +2,7 @@ import {useEffect,useState,useContext} from "react";
 import Avatar from "./Avatar";
 import Logo from "./Logo";
 import {UserContext} from "./UserContext.jsx";
+import _, { uniqBy } from 'lodash';
 
 export default function Chat(){
 
@@ -44,8 +45,8 @@ export default function Chat(){
         if('online' in messageData){
             showOnlinePeople(messageData.online);
         }
-        else{
-            setMessages(prev=> ([...prev,{isOur:false,text:messageData.text}]));
+        else if('text' in messageData) {
+            setMessages(prev=> ([...prev,{...messageData}]));
         }
     }
 
@@ -57,12 +58,21 @@ export default function Chat(){
             text: newMessageText,
         }));
         setNewMessageText('');
-        setMessages(prev =>([...prev,{text:newMessageText, isOur:true}]));
+        setMessages(prev =>([...prev,{
+            text:newMessageText,
+            sender: id,
+            recipient: selectedUserId,
+            id: Date.now(),
+        }]));
 
     }
 
+    // Gets rid of own profile
     const onlinePeopleExclOurUser =  {...onlinePeople};
     delete onlinePeopleExclOurUser[id];
+
+    // Gets rid of double message issue with lodash
+    const messagesWithoutDupes = uniqBy(messages,'id');
 
 
 
@@ -95,13 +105,25 @@ export default function Chat(){
                         </div>
                     )}
                     {!!selectedUserId && (
-                        <div>
-                            {messages.map(message => (
-                                <div>{message.text}</div>
+                        <div className="relative">
+                            <div className="overflow-y-scroll absolute inset-0">
+                            {messagesWithoutDupes.map(message => (
+
+                                <div className={(message.sender === id? 'text-right' : 'text-left')}>
+
+                            
+                                    <div className={"text-left inline-block p-2 my-2 rounded-sm text-sm " +(message.sender === id ? 'bg-blue-500 text-white ': 'bg-white text-gray-500')}>
+                                        sender:{message.sender} <br/>
+                                        my id: {id} <br/>
+                                        {message.text}
+                                    </div>
+                                </div>
 
                             ))}
 
+                            </div>
                         </div>
+                        
 
                     )}
                 </div>
