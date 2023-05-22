@@ -3,6 +3,7 @@ import Avatar from "./Avatar.jsx";
 import Logo from "./Logo";
 import {UserContext} from "./UserContext.jsx";
 import _, { uniqBy } from 'lodash';
+import axios from "axios";
 
 export default function Chat(){
 
@@ -68,12 +69,24 @@ export default function Chat(){
      
     }
 
+    // Arrow function will be run when message changes
     useEffect(()=> {
         const div = divUnderMessages.current;
         if (div){
             div.scrollIntoView({behavior:'smooth', block:'end'});
         }
     }, [messages]);
+
+
+    // Arrow function will be run when selected user changes
+    useEffect(() => {
+        if(selectedUserId){
+            axios.get('/messages/' + selectedUserId).then()
+        }
+
+
+
+    }, [selectedUserId]);
 
     // Gets rid of own profile
     const onlinePeopleExclOurUser =  {...onlinePeople};
