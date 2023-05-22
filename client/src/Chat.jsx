@@ -1,5 +1,5 @@
-import {useEffect,useState,useContext} from "react";
-import Avatar from "./Avatar";
+import {useEffect,useState,useContext,useRef} from "react";
+import Avatar from "./Avatar.jsx";
 import Logo from "./Logo";
 import {UserContext} from "./UserContext.jsx";
 import _, { uniqBy } from 'lodash';
@@ -14,6 +14,7 @@ export default function Chat(){
     const {username,id} = useContext(UserContext);
     const [newMessageText,setNewMessageText] = useState('');
     const [messages,setMessages] = useState([]);
+    const divUnderMessages = useRef();
 
     // To stream new information coming from wss
     useEffect(()=>{
@@ -64,8 +65,15 @@ export default function Chat(){
             recipient: selectedUserId,
             id: Date.now(),
         }]));
-
+     
     }
+
+    useEffect(()=> {
+        const div = divUnderMessages.current;
+        if (div){
+            div.scrollIntoView({behavior:'smooth', block:'end'});
+        }
+    }, [messages]);
 
     // Gets rid of own profile
     const onlinePeopleExclOurUser =  {...onlinePeople};
@@ -105,8 +113,9 @@ export default function Chat(){
                         </div>
                     )}
                     {!!selectedUserId && (
-                        <div className="relative">
-                            <div className="overflow-y-scroll absolute inset-0">
+                   
+                        <div className="relative h-full">
+                            <div className="overflow-y-scroll absolute top-0 left-0 right-0 bottom-2">
                             {messagesWithoutDupes.map(message => (
 
                                 <div className={(message.sender === id? 'text-right' : 'text-left')}>
@@ -120,9 +129,11 @@ export default function Chat(){
                                 </div>
 
                             ))}
-
+                            <div ref={divUnderMessages}></div>
                             </div>
                         </div>
+                       
+
                         
 
                     )}

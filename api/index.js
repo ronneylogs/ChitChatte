@@ -184,7 +184,12 @@ wss.on('connection', (connection,req) => {
             });
             [...wss.clients]
             .filter(c=>c.userId === recipient)
-            .forEach(c=>c.send(JSON.stringify({text,sender:connection.userId})));
+            .forEach(c=>c.send(JSON.stringify({
+                text,
+                sender:connection.userId,
+                recipient,
+                id:messageDoc._id,
+            })));
         }
 
     });
