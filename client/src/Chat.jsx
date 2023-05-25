@@ -19,13 +19,23 @@ export default function Chat(){
 
     // To stream new information coming from wss
     useEffect(()=>{
+        connectToWs();
+    },[]);
+
+    function connectToWs(){
         const ws = new WebSocket('ws://localhost:4040');
         setWs(ws);
+        ws.addEventListener('message',handleMessage);
+        ws.addEventListener('close',() => {
 
-        // listening to changes in handle message
-        ws.addEventListener('message',handleMessage)
+            setTimeout(()=>{
+                console.log('Retrying connection');
+                connectToWs();
 
-    },[]);
+            },1000)
+
+        });
+    }
 
 
     // Loops through the people array and displays each userId's username
@@ -81,10 +91,10 @@ export default function Chat(){
     // Arrow function will be run when selected user changes
     useEffect(() => {
         if(selectedUserId){
-            axios.get('/messages/' + selectedUserId).then()
+            axios.get('/messages/' + selectedUserId).then(res => {
+                const {data} = res;
+            });
         }
-
-
 
     }, [selectedUserId]);
 
