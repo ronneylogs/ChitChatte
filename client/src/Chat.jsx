@@ -74,7 +74,7 @@ export default function Chat(){
             text:newMessageText,
             sender: id,
             recipient: selectedUserId,
-            id: Date.now(),
+            _id: Date.now(),
         }]));
      
     }
@@ -92,7 +92,7 @@ export default function Chat(){
     useEffect(() => {
         if(selectedUserId){
             axios.get('/messages/' + selectedUserId).then(res => {
-                const {data} = res;
+                setMessages(res.data);
             });
         }
 
@@ -103,7 +103,7 @@ export default function Chat(){
     delete onlinePeopleExclOurUser[id];
 
     // Gets rid of double message issue with lodash
-    const messagesWithoutDupes = uniqBy(messages,'id');
+    const messagesWithoutDupes = uniqBy(messages,'_id');
 
 
 
@@ -140,16 +140,17 @@ export default function Chat(){
                         <div className="relative h-full">
                             <div className="overflow-y-scroll absolute top-0 left-0 right-0 bottom-2">
                             {messagesWithoutDupes.map(message => (
+                                
 
-                                <div className={(message.sender === id? 'text-right' : 'text-left')}>
+                                <div key={message._id} className={(message.sender === id? 'text-right' : 'text-left')}>
 
                             
                                     <div className={"text-left inline-block p-2 my-2 rounded-sm text-sm " +(message.sender === id ? 'bg-blue-500 text-white ': 'bg-white text-gray-500')}>
-                                        sender:{message.sender} <br/>
-                                        my id: {id} <br/>
+
                                         {message.text}
                                     </div>
                                 </div>
+
 
                             ))}
                             <div ref={divUnderMessages}></div>

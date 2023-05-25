@@ -90,7 +90,7 @@ app.get('/messages/:userId',async (req,res) => {
     const messages = await Message.find({
         sender:{$in:[userId,ourUserId]},
         recipient:{$in:[userId,ourUserId]},
-    }).sort({createdAt:-1}).exec();
+    }).sort({createdAt:1});
     res.json(messages);
 });
 
@@ -218,7 +218,7 @@ wss.on('connection', (connection,req) => {
                 text,
                 sender:connection.userId,
                 recipient,
-                id:messageDoc._id,
+                _id:messageDoc._id,
             })));
         }
 
