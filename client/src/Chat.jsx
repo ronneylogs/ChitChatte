@@ -4,6 +4,7 @@ import Logo from "./Logo";
 import {UserContext} from "./UserContext.jsx";
 import _, { uniqBy } from 'lodash';
 import axios from "axios";
+import Contact from "./Contact.jsx";
 
 export default function Chat(){
 
@@ -12,6 +13,7 @@ export default function Chat(){
     // Connect to wss here
     const [ws,setWs] = useState(null);
     const [onlinePeople,setOnlinePeople] = useState({});
+    const [offlinePeople,setOfflinePeople] = useState({});
     const {username,id} = useContext(UserContext);
     const [newMessageText,setNewMessageText] = useState('');
     const [messages,setMessages] = useState([]);
@@ -20,7 +22,7 @@ export default function Chat(){
     // To stream new information coming from wss
     useEffect(()=>{
         connectToWs();
-    },[]);
+    },[selectedUserId]);
 
     function connectToWs(){
         const ws = new WebSocket('ws://localhost:4040');
@@ -32,7 +34,7 @@ export default function Chat(){
                 console.log('Retrying connection');
                 connectToWs();
 
-            },1000)
+            },1000);
 
         });
     }
@@ -87,6 +89,21 @@ export default function Chat(){
         }
     }, [messages]);
 
+    // Show online people
+    useEffect(()=>{
+        axios.get('/people').then(res=>{
+            const offlinePeopleArr = res.data
+            .filter(p=> p._id !== id)
+            .filter(p=> !Object.keys(onlinePeople).includes(p._id));
+            const offlinePeople = {};
+            offlinePeopleArr.forEach(p => {
+                offlinePeople[p._id] = p;
+            });
+            setOfflinePeople(offlinePeople);
+        });
+
+    },[onlinePeople]);
+
 
     // Arrow function will be run when selected user changes
     useEffect(() => {
@@ -114,19 +131,29 @@ export default function Chat(){
       
                     {/* Goes over each online person and displays their username given userId */}
                 {Object.keys(onlinePeopleExclOurUser).map(userId => (
-                    <div key={userId} onClick={() => setSelectedUserId(userId)} 
-                        className={"border-b border-gray-100 py-2 pl-4 flex items-center gap-2 cursor-pointer " +(userId === selectedUserId? 'bg-blue-50': '')}>
-                        {userId === selectedUserId && (
-                        <div className="w-1 bg-blue-500 h-12 rounded-r-md"></div>
-                        )}
-                        <div className="flex gap-2 py-2 pl-4 items-center">
-                            <Avatar username={onlinePeople[userId]} userId={userId}/>
-                            <span className="text-grey-800">{onlinePeople[userId]}</span>
-                        </div>
+                    <Contact 
+                    key = {userId}
+                    id={userId} 
+                    online={true}
+                    username={onlinePeopleExclOurUser[userId]}
+                    onClick={() => setSelectedUserId(userId)}
+                    selected={userId === selectedUserId}
+                    ></Contact>
 
-
-                    </div>
                 ))}
+                {Object.keys(offlinePeople).map(userId => (
+                    <Contact 
+                    key = {userId}
+                    id={userId} 
+                    online={false}
+                    username={offlinePeople[userId].username}
+                    onClick={() => setSelectedUserId(userId)}
+                    selected={userId === selectedUserId}
+                    ></Contact>
+
+                ))}
+                
+                
             </div>
             <div className="flex flex-col bg-blue-50 w-2/3 py-2">
                 <div className="flex-grow">
