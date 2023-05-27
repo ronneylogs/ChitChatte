@@ -115,6 +115,9 @@ export default function Chat(){
 
     }, [selectedUserId]);
 
+
+
+        
     // Gets rid of own profile
     const onlinePeopleExclOurUser =  {...onlinePeople};
     delete onlinePeopleExclOurUser[id];
