@@ -132,6 +132,10 @@ app.post('/login', async (req,res) =>{
     }
 });
 
+app.post('/logout', async (req,res) => {
+    res.cookie('token','',{sameSite:'none', secure:true}).json('ok');
+});
+
 
 // Registers a new user.
 app.post('/register', async (req,res) => {
@@ -211,9 +215,9 @@ wss.on('connection', (connection,req) => {
         },1000);
     }, 5000);
 
-    connection.on('pong'), () => {
+    connection.on('pong', () => {
         clearTimeout(connection.deathTimer);
-    }
+    });
 
 
 
