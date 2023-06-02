@@ -1,6 +1,9 @@
 import {useState,useContext} from "react";
+import React from 'react'
 import axios from "axios";
 import {UserContext} from "./UserContext.jsx";
+import cat from './assets/about-pusheen.webp';
+import Lottie from 'react-lottie';
 
 export default function RegisterAndLoginForm(){
 
@@ -26,8 +29,12 @@ export default function RegisterAndLoginForm(){
     }
 
     return(
-        <div className="bg-blue-50 h-screen flex items-center">
+        <div className="bg-red-50 h-screen flex items-center">
+          
             <form className="w-64 mx-auto mb-12" onSubmit={handleSubmit}>
+                <img src={cat} alt="" />
+
+                <h1 className="mb-10 text-4xl font-extrabold leading-none tracking-tight text-gray-900 text-center ">Chit Chatte</h1>
                 <input value={username}
                 onChange={ev => setUsername(ev.target.value)} 
                 type="text" 
