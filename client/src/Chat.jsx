@@ -183,7 +183,7 @@ export default function Chat(){
 
     return(
         <div className="flex h-screen">
-            <div className="bg-white w-1/3 flex flex-col">
+            <div className="bg-gray-50 w-1/3 flex flex-col">
                 <div className="flex-grow">           
                     <Logo/>
       
@@ -224,7 +224,7 @@ export default function Chat(){
                 
                 </div>
             </div>
-            <div className="flex flex-col bg-blue-50 w-2/3 py-2">
+            <div className="flex flex-col bg-red-100 w-2/3 py-2">
                 <div className="flex-grow">
                     {!selectedUserId &&(
                         <div className ="flex h-full items-center justify-center">
@@ -241,11 +241,12 @@ export default function Chat(){
                                 <div key={message._id} className={(message.sender === id? 'text-right' : 'text-left')}>
 
                             
-                                    <div className={"text-left inline-block p-2 my-2 rounded-sm text-sm " +(message.sender === id ? 'bg-blue-500 text-white ': 'bg-white text-gray-500')}>
+                                    <div className={"text-left inline-block py-2 px-3 my-2 mx-3 rounded-md text-sm " +(message.sender === id ? 'bg-blue-500 text-white ': 'bg-white text-gray-500')}>
 
                                         {message.text}
                                         {message.file && (
                                             <div className="flex items-center gap-1">
+                                                <h2>dinfdinf</h2>
 
                                                 <a target ="_blank"className ="border-b flex items-center gap-1 "href = {axios.defaults.baseURL + '/uploads/' + message.file}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
