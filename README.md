@@ -4,7 +4,7 @@
 This project grew from my fellow cat owner friends bombarding my text message inbox with pictures of their cat. Add a bit of tech savvy, determination and a comical personality, Chit Chatte was born.
 
 ## Description
-Chit Chatte (French for cat) allows cat owners to bombard eachother with narccistic images of their cat. Users can make accounts and send private messages eachother all without overflowing each other's text message inbox.
+Chit Chatte (French for cat) allows cat owners to bombard eachother with narcissistic images of their cat. Users can make accounts and send private messages eachother all without overflowing each other's text message inbox.
 
 ## Key Technologies:
 - MongoDB
