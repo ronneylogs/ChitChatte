@@ -246,7 +246,7 @@ export default function Chat(){
                                         {message.text}
                                         {message.file && (
                                             <div className="flex items-center gap-1">
-                                                <h2>dinfdinf</h2>
+                                                
 
                                                 <a target ="_blank"className ="border-b flex items-center gap-1 "href = {axios.defaults.baseURL + '/uploads/' + message.file}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
