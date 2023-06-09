@@ -60,8 +60,6 @@ app.use(cors({
 }));
 
 
-// const mongoUrl = 'mongodb+srv://ronneylok:iyFBdes0F8jh5KHC@cluster0.38q0xj4.mongodb.net/?retryWrites=true&w=majority';
-
 async function getUserDataFromRequest(req) {
     return new Promise((resolve,reject)=>{
          const token = req.cookies?.token;
